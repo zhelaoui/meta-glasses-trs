@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=600, height=600, initial-scale=1.0" />
+  <title>Assistant Réglage CNC - Meta Display</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="glass-app">
+
+    <header class="top-bar">
+      <div class="title-block">
+        <div class="machine-name" id="machine-name">CMX50</div>
+        <div class="job-name" id="job-name">Réglage poche aluminium</div>
+      </div>
+
+      <div class="step-badge">
+        <span id="step-counter">1/6</span>
+      </div>
+    </header>
+
+    <section class="machine-status">
+      <div class="status-card">
+        <span>Mode</span>
+        <strong id="live-mode">Réglage</strong>
+      </div>
+
+      <div class="status-card">
+        <span>Outil</span>
+        <strong id="live-tool">T08</strong>
+      </div>
+
+      <div class="status-card">
+        <span>Origine</span>
+        <strong id="live-origin">Non</strong>
+      </div>
+    </section>
+
+    <section class="main-card">
+      <div class="step-category" id="step-category">Préparation</div>
+
+      <h1 id="step-title">Chargement...</h1>
+
+      <p id="step-action"></p>
+
+      <div class="alert-box" id="alert-box">
+        Chargement alerte...
+      </div>
+
+      <div class="content-grid">
+        <div class="data-card">
+          <div class="block-title">Données</div>
+          <div id="data-list"></div>
+        </div>
+
+        <div class="check-card">
+          <div class="block-title">À valider</div>
+          <div id="checklist" class="checklist"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bottom-bar">
+      <span>←</span>
+      <span>↑ ↓ sélectionner</span>
+      <span>Entrée valider</span>
+      <span>→</span>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+{
+  "job": {
+    "id": "cmx50-poche-alu",
+    "machine": "CMX50",
+    "title": "Réglage poche aluminium",
+    "program": "O1205_POCHE_ALU",
+    "material": "Aluminium 6082",
+    "raw": "120 x 80 x 25 mm",
+    "expectedTool": "T12 - Fraise carbure Ø10",
+    "expectedToolShort": "T12 Ø10",
+    "wrongToolShort": "T08 Ø6",
+    "origin": "G54",
+    "originPosition": "Coin avant gauche",
+    "zReference": "Dessus pièce",
+    "operator": "Opérateur fraisage"
+  },
+  "steps": [
+    {
+      "category": "Préparation",
+      "title": "Identifier le bon programme",
+      "action": "Avant de toucher la machine, vérifier que l’OF, le programme et la matière correspondent.",
+      "data": [
+        ["Programme attendu", "O1205_POCHE_ALU"],
+        ["Matière", "Aluminium 6082"],
+        ["Brut", "120 x 80 x 25 mm"]
+      ],
+      "checks": [
+        "OF correspondant à la pièce",
+        "Programme O1205 chargé",
+        "Matière aluminium confirmée"
+      ]
+    },
+    {
+      "category": "Montage",
+      "title": "Monter la pièce dans l’étau",
+      "action": "Garder les mains libres : les lunettes affichent les points de contrôle pendant le serrage.",
+      "data": [
+        ["Serrage", "Étau mécanique"],
+        ["Appui", "Sur cales parallèles"],
+        ["Dépassement mini", "8 mm"]
+      ],
+      "checks": [
+        "Mors propres",
+        "Pièce bien en appui",
+        "Serrage ferme",
+        "Aucun outil oublié dans la machine"
+      ]
+    },
+    {
+      "category": "Outil",
+      "title": "Contrôler l’outil en broche",
+      "action": "Les lunettes comparent l’outil attendu avec l’outil détecté dans la procédure simulée.",
+      "data": [
+        ["Outil attendu", "T12 - Fraise carbure Ø10"],
+        ["Correcteur", "H12 / D12"],
+        ["Longueur mini", "35 mm sortie"]
+      ],
+      "checks": [
+        "Outil T12 monté",
+        "Fraise Ø10 conforme",
+        "Correcteur H12 vérifié",
+        "Longueur outil mesurée"
+      ]
+    },
+    {
+      "category": "Origine",
+      "title": "Prendre l’origine G54",
+      "action": "L’opérateur suit les instructions sans regarder une feuille ou une tablette.",
+      "data": [
+        ["Origine", "G54"],
+        ["X/Y", "Coin avant gauche"],
+        ["Z", "Dessus pièce"]
+      ],
+      "checks": [
+        "Origine X prise",
+        "Origine Y prise",
+        "Origine Z prise",
+        "Valeurs G54 contrôlées"
+      ]
+    },
+    {
+      "category": "Simulation",
+      "title": "Passage à vide sécurisé",
+      "action": "Avant premier copeau, contrôler la trajectoire avec avance réduite et main proche de l’arrêt.",
+      "data": [
+        ["Mode conseillé", "Single Block"],
+        ["Avance départ", "25 %"],
+        ["Broche", "Arrêt puis contrôle"]
+      ],
+      "checks": [
+        "Bon programme affiché",
+        "Simulation graphique cohérente",
+        "Premier passage en avance réduite",
+        "Aucun risque visible de collision"
+      ]
+    },
+    {
+      "category": "Contrôle",
+      "title": "Valider la première pièce",
+      "action": "Les lunettes affichent les cotes à contrôler et indiquent si la pièce est dans la tolérance.",
+      "data": [
+        ["Cote poche X", "60.00 ±0.10 mm"],
+        ["Mesure simulée", "60.04 mm"],
+        ["Résultat", "OK"]
+      ],
+      "checks": [
+        "Dimension X contrôlée",
+        "Dimension Y contrôlée",
+        "Profondeur contrôlée",
+        "Feu vert pour lancement série"
+      ]
+    }
+  ]
+}
