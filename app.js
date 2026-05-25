@@ -11,7 +11,7 @@ async function init() {
   const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
   Object.assign(state, saved);
   bind();
-  setupMotion();
+  await setupMotion();
   simulateApiRefresh();
   render();
 }
@@ -127,11 +127,28 @@ function gpsTest() {
   if (!navigator.geolocation) { state.sensors.gps = "indisponible"; render(); return; }
   navigator.geolocation.getCurrentPosition(() => { state.sensors.gps = "GPS téléphone OK"; render(); }, () => { state.sensors.gps = "permission refusée / indisponible"; render(); }, { timeout: 3500 });
 }
-function setupMotion() {
-  if ("DeviceOrientationEvent" in window) {
-    window.addEventListener("deviceorientation", (e) => { state.sensors.motion = `capteur OK α:${Math.round(e.alpha || 0)}`; if (panel === "demo") render(); }, { passive: true });
-  } else {
+function attachDeviceOrientationListener() {
+  window.addEventListener("deviceorientation", (e) => {
+    state.sensors.motion = `capteur OK α:${Math.round(e.alpha || 0)}`;
+    if (panel === "demo") render();
+  }, { passive: true });
+}
+async function setupMotion() {
+  if (!("DeviceOrientationEvent" in window)) {
     setInterval(() => { state.sensors.motion = `simulé PC α:${Math.floor(Math.random() * 30)}`; if (panel === "demo") render(); }, 3000);
+    return;
+  }
+  try {
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      const permission = await DeviceOrientationEvent.requestPermission();
+      if (permission !== "granted") {
+        state.sensors.motion = "capteurs: permission refusée";
+        return;
+      }
+    }
+    attachDeviceOrientationListener();
+  } catch {
+    state.sensors.motion = "capteurs: permission indisponible";
   }
 }
 function simulateApiRefresh() {
@@ -139,7 +156,7 @@ function simulateApiRefresh() {
     const modes = ["Réglage", "Single Block", "MDI"]; state.live.mode = modes[Math.floor(Math.random() * modes.length)];
     state.live.feed = [20, 25, 30, 35][Math.floor(Math.random() * 4)];
     state.live.api = Math.random() > 0.2 ? "SIM CONNECTÉ" : "SIM LATENCE";
-    if (panel === "demo" || currentStepIndex >= 4) render();
+    render();
   }, 4500);
 }
 init().catch((e) => { $("step-title").textContent = "Erreur data.json"; $("alert-box").className = "alert-box alert-danger"; $("alert-box").textContent = e.message; });
