@@ -2,72 +2,65 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=600, height=600, initial-scale=1.0" />
-  <title>Assistant Réglage CNC - Meta Display</title>
+  <meta name="viewport" content="width=640, height=350, initial-scale=1.0" />
+  <title>Meta CNC HUD - CMX50</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="glass-app">
-
+  <main class="glass-app" role="application" aria-label="Assistant CNC Meta Display">
     <header class="top-bar">
-      <div class="title-block">
-        <div class="machine-name" id="machine-name">CMX50</div>
-        <div class="job-name" id="job-name">Réglage poche aluminium</div>
+      <div class="brand">META CNC HUD</div>
+      <div class="meta-inline">
+        <span id="machine-name">CMX50</span>
+        <span id="program-name">O1205_POCHE_ALU</span>
       </div>
-
-      <div class="step-badge">
-        <span id="step-counter">1/6</span>
+      <div class="step-pill" id="step-counter">1/8</div>
+      <div class="live-strip" id="live-strip">
+        <span class="chip" id="live-mode">MODE: Réglage</span>
+        <span class="chip" id="live-tool">OUTIL: T08 Ø6</span>
+        <span class="chip" id="live-origin">G54: NOK</span>
+        <span class="chip" id="live-api">API: SIM</span>
       </div>
     </header>
 
-    <section class="machine-status">
-      <div class="status-card">
-        <span>Mode</span>
-        <strong id="live-mode">Réglage</strong>
-      </div>
-
-      <div class="status-card">
-        <span>Outil</span>
-        <strong id="live-tool">T08</strong>
-      </div>
-
-      <div class="status-card">
-        <span>Origine</span>
-        <strong id="live-origin">Non</strong>
-      </div>
-    </section>
-
-    <section class="main-card">
-      <div class="step-category" id="step-category">Préparation</div>
-
-      <h1 id="step-title">Chargement...</h1>
-
-      <p id="step-action"></p>
-
-      <div class="alert-box" id="alert-box">
-        Chargement alerte...
-      </div>
-
-      <div class="content-grid">
-        <div class="data-card">
-          <div class="block-title">Données</div>
-          <div id="data-list"></div>
+    <section class="hud-main">
+      <aside class="col left-col">
+        <h2 id="step-category">Préparation</h2>
+        <p class="left-sub" id="left-context">Contexte machine</p>
+        <div id="step-visual" class="visual" aria-label="Schéma étape"></div>
+        <div class="mini-live">
+          <div><span>Avance</span><strong id="live-feed">25%</strong></div>
+          <div><span>Sécurité</span><strong id="live-safety">ATTENTE</strong></div>
         </div>
+      </aside>
 
-        <div class="check-card">
-          <div class="block-title">À valider</div>
-          <div id="checklist" class="checklist"></div>
+      <section class="col center-col">
+        <h1 id="step-title">Chargement…</h1>
+        <p id="step-action"></p>
+        <div id="value-note" class="value-note">Valeur lunettes</div>
+        <div id="alert-box" class="alert-box" aria-live="polite">Alerte en cours de chargement…</div>
+      </section>
+
+      <aside class="col right-col">
+        <div class="panel-header">
+          <span id="panel-title">Checklist étape</span>
+          <span id="panel-mode">M: Checklist</span>
         </div>
-      </div>
+        <div id="checklist-panel" class="panel active" aria-label="Checklist"></div>
+        <div id="demo-panel" class="panel" aria-label="Fonctions lunettes"></div>
+      </aside>
     </section>
 
     <footer class="bottom-bar">
-      <span>←</span>
-      <span>↑ ↓ sélectionner</span>
+      <span>←/→ étape</span>
+      <span>↑/↓ sélection</span>
       <span>Entrée valider</span>
-      <span>→</span>
+      <span>Esc retour</span>
+      <span>R reset</span>
+      <span>M panneau</span>
+      <span>A audio</span>
+      <span>G GPS</span>
     </footer>
-
   </main>
 
   <script src="app.js"></script>
