@@ -25,7 +25,7 @@ body {
 .step-pill { justify-self: end; background: #fff; color: #000; font-weight: 900; border-radius: 8px; padding: 4px 8px; font-size: 14px; }
 .live-strip { grid-column: 1 / -1; display: flex; gap: 6px; }
 .chip { font-size: 11px; padding: 3px 6px; border: 1px solid #4c607b; border-radius: 999px; background: rgba(255,255,255,.05); }
-.hud-main { display: grid; grid-template-columns: 170px 250px 190px; gap: 8px; min-height: 0; }
+.hud-main { display: grid; grid-template-columns: 166px 244px 194px; gap: 8px; min-height: 0; }
 .col { border: 1px solid #314258; border-radius: 8px; padding: 7px; background: rgba(255,255,255,.03); min-height: 0; }
 .left-col h2 { margin: 0; font-size: 13px; color: #95e4ff; }
 .left-sub { margin: 2px 0 4px; font-size: 11px; color: #b2c2d8; }
