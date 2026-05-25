@@ -10,105 +10,17 @@
     "expectedToolShort": "T12 Ø10",
     "wrongToolShort": "T08 Ø6",
     "origin": "G54",
-    "originPosition": "Coin avant gauche",
-    "zReference": "Dessus pièce",
-    "operator": "Opérateur fraisage"
+    "originPosition": "coin avant gauche",
+    "zReference": "dessus pièce"
   },
   "steps": [
-    {
-      "category": "Préparation",
-      "title": "Identifier le bon programme",
-      "action": "Avant de toucher la machine, vérifier que l’OF, le programme et la matière correspondent.",
-      "data": [
-        ["Programme attendu", "O1205_POCHE_ALU"],
-        ["Matière", "Aluminium 6082"],
-        ["Brut", "120 x 80 x 25 mm"]
-      ],
-      "checks": [
-        "OF correspondant à la pièce",
-        "Programme O1205 chargé",
-        "Matière aluminium confirmée"
-      ]
-    },
-    {
-      "category": "Montage",
-      "title": "Monter la pièce dans l’étau",
-      "action": "Garder les mains libres : les lunettes affichent les points de contrôle pendant le serrage.",
-      "data": [
-        ["Serrage", "Étau mécanique"],
-        ["Appui", "Sur cales parallèles"],
-        ["Dépassement mini", "8 mm"]
-      ],
-      "checks": [
-        "Mors propres",
-        "Pièce bien en appui",
-        "Serrage ferme",
-        "Aucun outil oublié dans la machine"
-      ]
-    },
-    {
-      "category": "Outil",
-      "title": "Contrôler l’outil en broche",
-      "action": "Les lunettes comparent l’outil attendu avec l’outil détecté dans la procédure simulée.",
-      "data": [
-        ["Outil attendu", "T12 - Fraise carbure Ø10"],
-        ["Correcteur", "H12 / D12"],
-        ["Longueur mini", "35 mm sortie"]
-      ],
-      "checks": [
-        "Outil T12 monté",
-        "Fraise Ø10 conforme",
-        "Correcteur H12 vérifié",
-        "Longueur outil mesurée"
-      ]
-    },
-    {
-      "category": "Origine",
-      "title": "Prendre l’origine G54",
-      "action": "L’opérateur suit les instructions sans regarder une feuille ou une tablette.",
-      "data": [
-        ["Origine", "G54"],
-        ["X/Y", "Coin avant gauche"],
-        ["Z", "Dessus pièce"]
-      ],
-      "checks": [
-        "Origine X prise",
-        "Origine Y prise",
-        "Origine Z prise",
-        "Valeurs G54 contrôlées"
-      ]
-    },
-    {
-      "category": "Simulation",
-      "title": "Passage à vide sécurisé",
-      "action": "Avant premier copeau, contrôler la trajectoire avec avance réduite et main proche de l’arrêt.",
-      "data": [
-        ["Mode conseillé", "Single Block"],
-        ["Avance départ", "25 %"],
-        ["Broche", "Arrêt puis contrôle"]
-      ],
-      "checks": [
-        "Bon programme affiché",
-        "Simulation graphique cohérente",
-        "Premier passage en avance réduite",
-        "Aucun risque visible de collision"
-      ]
-    },
-    {
-      "category": "Contrôle",
-      "title": "Valider la première pièce",
-      "action": "Les lunettes affichent les cotes à contrôler et indiquent si la pièce est dans la tolérance.",
-      "data": [
-        ["Cote poche X", "60.00 ±0.10 mm"],
-        ["Mesure simulée", "60.04 mm"],
-        ["Résultat", "OK"]
-      ],
-      "checks": [
-        "Dimension X contrôlée",
-        "Dimension Y contrôlée",
-        "Profondeur contrôlée",
-        "Feu vert pour lancement série"
-      ]
-    }
+    {"category":"Étape 1","title":"Vérifier OF / programme / matière","action":"Confirmer OF, programme CN et matière avant réglage.","value":"Info critique visible sans sortir la tablette.","context":"Programme CN / prérequis.","visual":"program","checks":["OF validé","Programme O1205 chargé","Matière Al 6082 confirmée"]},
+    {"category":"Étape 2","title":"Monter la pièce dans l’étau","action":"Serrer la pièce sur cales, contrôler appuis.","value":"Les lunettes guident pendant action physique.","context":"Montage brut 120 x 80 x 25.","visual":"vise","checks":["Mors propres","Pièce bien en appui","Serrage ferme"]},
+    {"category":"Étape 3","title":"Contrôler l’outil en broche","action":"Vérifier outil monté et diamètre.","value":"Alerte immédiate si mauvais outil.","context":"Outil attendu T12 Ø10.","visual":"tool","checks":["Outil T12 monté","Fraise Ø10 conforme","Correcteur H12 vérifié"]},
+    {"category":"Étape 4","title":"Mesurer longueur outil","action":"Mesurer longueur et confirmer correcteur.","value":"Réduit le risque collision Z.","context":"Longueur outil requise avant cycle.","visual":"toolLength","checks":["Longueur outil mesurée","Valeur H12 enregistrée"]},
+    {"category":"Étape 5","title":"Prendre origine G54","action":"Prendre X/Y coin avant gauche, Z dessus pièce.","value":"Instruction affichée pendant palpation.","context":"Origine G54 obligatoire.","visual":"g54","checks":["Origine X validée","Origine Y validée","Origine Z validée","Valeurs G54 contrôlées"]},
+    {"category":"Étape 6","title":"Simulation à vide sécurisée","action":"Lancer simulation en avance réduite.","value":"Alerte si simulation non validée.","context":"Single block + avance 25%.","visual":"path","checks":["Simulation lancée","Trajectoire cohérente","Aucun risque collision"]},
+    {"category":"Étape 7","title":"Valider première pièce","action":"Contrôler cotes et état de surface.","value":"Checklist rapide mains libres.","context":"Contrôle 1ère pièce obligatoire.","visual":"part","checks":["Cote X OK","Cote Y OK","Profondeur OK"]},
+    {"category":"Étape 8","title":"Feu vert lancement série","action":"Autoriser la série seulement si tous verrous sont OK.","value":"Décision immédiate avec statut global.","context":"Démarrage production.","visual":"green","checks":["Feu vert série"]}
   ]
 }
