@@ -10,6 +10,8 @@ async function init() {
   job = data.job; steps = data.steps;
   const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
   Object.assign(state, saved);
+  state.demoAuto = false;
+  state.autoTimer = null;
   if (!state.viewMode) state.viewMode = "operator";
   bind();
   await setupMotion();
@@ -160,7 +162,7 @@ function startDemoAuto() {
 }
 function stopDemoAuto() { state.demoAuto = false; clearInterval(state.autoTimer); state.autoTimer = null; save(); }
 function resetAll() { localStorage.removeItem(storageKey); state.viewMode = "operator"; state.checked = {}; panel = "checklist"; currentStepIndex = 0; selectedCheckIndex = 0; stopDemoAuto(); state.live = { mode:"Réglage", tool:"T08 Ø6", g54:false, feed:25, api:"SIM", safety:"ATTENTE", toolLength:false, simulation:false, firstPart:false }; render(); }
-function save() { localStorage.setItem(storageKey, JSON.stringify({ viewMode: state.viewMode, checked: state.checked, live: state.live, sensors: state.sensors, demoAuto: state.demoAuto })); }
+function save() { localStorage.setItem(storageKey, JSON.stringify({ viewMode: state.viewMode, checked: state.checked, live: state.live, sensors: state.sensors })); }
 function audioTest() { let ok = false; try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = "sine"; o.frequency.value = 880; g.gain.value = 0.03; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.14); ok = true; } catch {}
   if ("speechSynthesis" in window) { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance("Alerte CNC")); ok = true; }
   state.sensors.audio = ok ? "OK" : "audio non disponible dans ce navigateur"; render(); }
