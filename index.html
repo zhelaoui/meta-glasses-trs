@@ -16,14 +16,16 @@
       </div>
       <div class="step-pill" id="step-counter">1/8</div>
       <div class="live-strip" id="live-strip">
+        <span class="chip" id="live-mode-label">MODE OPÉRATEUR</span>
         <span class="chip" id="live-mode">MODE: Réglage</span>
         <span class="chip" id="live-tool">OUTIL: T08 Ø6</span>
         <span class="chip" id="live-origin">G54: NOK</span>
         <span class="chip" id="live-api">API: SIM</span>
+        <span class="chip chip-demo" id="demo-status">DÉMO AUTO OFF</span>
       </div>
     </header>
 
-    <section class="hud-main">
+    <section class="hud-main" id="details-layout">
       <aside class="col left-col">
         <h2 id="step-category">Préparation</h2>
         <p class="left-sub" id="left-context">Contexte machine</p>
@@ -32,6 +34,7 @@
           <div><span>Verrous sécurité</span><strong id="locks-gauge">0/4</strong></div>
           <div><span>Avance</span><strong id="live-feed">25%</strong></div>
           <div><span>Sécurité</span><strong id="live-safety">ATTENTE</strong></div>
+          <div class="locks-list" id="locks-list"></div>
         </div>
       </aside>
 
@@ -53,13 +56,35 @@
       </aside>
     </section>
 
-    <footer class="bottom-bar">
+    <section class="operator-view" id="operator-layout">
+      <div class="operator-top">
+        <span id="operator-machine">CMX50</span>
+        <span id="operator-program">O1205_POCHE_ALU</span>
+        <span id="operator-step">1/8</span>
+      </div>
+      <div class="operator-locks">Verrous sécurité : <strong id="operator-locks">0/4</strong></div>
+      <div class="operator-main">
+        <h1 id="operator-title">CHARGEMENT</h1>
+        <p id="operator-action"></p>
+        <p id="operator-validation" class="operator-validation">Validation en cours : --</p>
+        <div id="operator-alert" class="operator-alert">Alerte chargement…</div>
+      </div>
+      <div class="operator-bottom">
+        <span>←/→ étape</span>
+        <span>Entrée valider</span>
+        <span>O détails</span>
+        <span>D démo</span>
+      </div>
+    </section>
+
+    <footer class="bottom-bar" id="details-footer">
       <span>←/→ étape</span>
       <span>↑/↓ sélection</span>
       <span>Entrée valider</span>
       <span>Esc retour</span>
       <span>R reset</span>
       <span>M panneau</span>
+      <span>O mode</span>
       <span>D démo auto</span>
       <span>A audio</span>
       <span>G GPS</span>

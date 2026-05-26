@@ -23,8 +23,10 @@ body {
 .brand { font-size: 14px; font-weight: 900; color: #8bd8ff; letter-spacing: .3px; }
 .meta-inline { font-size: 12px; color: #c9d8ed; display: flex; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .step-pill { justify-self: end; background: #fff; color: #000; font-weight: 900; border-radius: 8px; padding: 5px 8px; font-size: 14px; }
-.live-strip { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.live-strip { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
 .chip { font-size: 11px; padding: 4px 6px; border: 1px solid #4c607b; border-radius: 999px; background: rgba(255,255,255,.05); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip-demo { font-weight: 900; text-align: center; }
+.chip-demo.active { border-color: #ff5656; color: #ffd1d1; background: rgba(255, 86, 86, .24); }
 
 .hud-main { display: grid; grid-template-columns: 180px 1fr 190px; gap: 8px; min-height: 0; }
 .col { border: 1px solid #314258; border-radius: 8px; padding: 8px; background: rgba(255,255,255,.03); min-height: 0; overflow: hidden; }
@@ -37,12 +39,16 @@ body {
 .mini-live div { display: flex; justify-content: space-between; font-size: 11px; }
 .mini-live span { color: #9bb0ca; }
 .mini-live strong { color: #fff; }
+.locks-list { display: grid !important; gap: 2px; margin-top: 4px; }
+.lock-item { font-size: 10px; border-left: 2px solid #ff5656; padding-left: 4px; color: #ffd7d7; }
+.lock-item.ok { border-left-color: #36d679; color: #d6ffe8; }
 
 .center-col { display: grid; grid-template-rows: auto auto auto 1fr; gap: 8px; }
 .center-col h1 { margin: 0; font-size: 24px; line-height: 1.1; }
 #step-action { margin: 0; font-size: 15px; color: #d8e3f3; line-height: 1.25; min-height: 72px; }
 .value-note { font-size: 12px; border-left: 2px solid #7eceff; padding-left: 8px; color: #c8edff; margin: 0; }
-.alert-box { font-size: 15px; font-weight: 800; line-height: 1.25; border-radius: 6px; padding: 8px; min-height: 130px; }
+.alert-box, .operator-alert { font-size: 15px; font-weight: 800; line-height: 1.25; border-radius: 6px; padding: 8px; }
+.alert-box { min-height: 130px; }
 .alert-ok { background: rgba(54, 214, 121, .16); border: 1px solid #36d679; color: #ddffea; }
 .alert-warning { background: rgba(255, 179, 69, .16); border: 1px solid #ffb345; color: #ffe3bd; }
 .alert-danger { background: rgba(255, 86, 86, .2); border: 1px solid #ff5656; color: #ffd4d4; }
@@ -57,5 +63,20 @@ body {
 .box { width: 14px; height: 14px; border: 1px solid #9eb0c7; border-radius: 3px; text-align: center; font-weight: 900; line-height: 12px; flex: 0 0 auto; }
 .demo-line { font-size: 11px; margin-bottom: 4px; padding: 3px 4px; border-radius: 4px; background: rgba(255,255,255,.05); }
 .demo-line.off { color: #ffcfcf; border-left: 2px solid #ff6868; }
-.bottom-bar { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); align-items: center; gap: 6px; font-size: 10px; color: #93a7c1; }
+.bottom-bar { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); align-items: center; gap: 6px; font-size: 10px; color: #93a7c1; }
 .bottom-bar span { text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.operator-view { display: none; border: 1px solid #4e6886; border-radius: 10px; padding: 10px; background: rgba(255,255,255,.03); }
+.operator-top { display: grid; grid-template-columns: 1fr 1.3fr auto; gap: 8px; font-weight: 800; font-size: 18px; border-bottom: 1px solid #39516f; padding-bottom: 6px; }
+.operator-locks { margin-top: 6px; font-size: 18px; color: #c8d8eb; }
+.operator-main { margin-top: 10px; display: grid; gap: 10px; }
+.operator-main h1 { margin: 0; font-size: 34px; line-height: 1.05; }
+#operator-action { margin: 0; font-size: 22px; line-height: 1.3; min-height: 88px; }
+.operator-validation { margin: 0; font-size: 16px; color: #9cd6ff; }
+.operator-alert { font-size: 24px; min-height: 172px; }
+.operator-bottom { margin-top: auto; border-top: 1px solid #39516f; padding-top: 8px; font-size: 17px; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 4px; }
+.operator-bottom span { text-align: center; }
+
+body.operator-mode .glass-app { grid-template-rows: 90px 1fr; }
+body.operator-mode #details-layout, body.operator-mode #details-footer { display: none; }
+body.operator-mode .operator-view { display: grid; grid-template-rows: auto auto 1fr auto; min-height: 0; }
