@@ -28,3 +28,8 @@ Puis ouvrir `http://localhost:8000`.
 - Pas d’accès caméra/photo/micro natif lunettes en Web App simple.
 - Ces fonctions sont marquées **prévu via SDK mobile / Device Access Toolkit**.
 - Données machine en mode simulé, code prêt pour une future API (`fetch`).
+
+## Déploiement GitHub Pages
+- Paramétrer **Settings > Pages** sur `Deploy from a branch`, branche `main`, dossier `/ (root)`.
+- En cas de cache navigateur/CDN : faire un hard refresh (`Ctrl+F5`) ou ouvrir en navigation privée.
+- Pour forcer un redéploiement, pousser un commit (même documentation) sur `main`.

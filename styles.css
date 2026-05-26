@@ -57,5 +57,5 @@ body {
 .box { width: 14px; height: 14px; border: 1px solid #9eb0c7; border-radius: 3px; text-align: center; font-weight: 900; line-height: 12px; flex: 0 0 auto; }
 .demo-line { font-size: 11px; margin-bottom: 4px; padding: 3px 4px; border-radius: 4px; background: rgba(255,255,255,.05); }
 .demo-line.off { color: #ffcfcf; border-left: 2px solid #ff6868; }
-.bottom-bar { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); align-items: center; gap: 6px; font-size: 10px; color: #93a7c1; }
+.bottom-bar { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); align-items: center; gap: 6px; font-size: 10px; color: #93a7c1; }
 .bottom-bar span { text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
