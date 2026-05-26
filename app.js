@@ -1,7 +1,7 @@
 let job; let steps = [];
 let currentStepIndex = 0; let selectedCheckIndex = 0; let panel = "checklist";
-const storageKey = "meta_cnc_hud_state_v3";
-const state = { checked: {}, demoAuto: false, autoTimer: null, live: { mode: "Réglage", tool: "T08 Ø6", g54: false, feed: 25, api: "SIM", safety: "ATTENTE", toolLength: false, simulation: false, firstPart: false }, sensors: { gps: "GPS: non testé", audio: "Audio: non testé", motion: "Capteurs: simulés PC" } };
+const storageKey = "meta_cnc_hud_state_v4";
+const state = { viewMode: "operator", checked: {}, demoAuto: false, autoTimer: null, live: { mode: "Réglage", tool: "T08 Ø6", g54: false, feed: 25, api: "SIM", safety: "ATTENTE", toolLength: false, simulation: false, firstPart: false }, sensors: { gps: "GPS: non testé", audio: "Audio: non testé", motion: "Capteurs: simulés PC" } };
 const $ = (id) => document.getElementById(id);
 
 async function init() {
@@ -10,6 +10,7 @@ async function init() {
   job = data.job; steps = data.steps;
   const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
   Object.assign(state, saved);
+  if (!state.viewMode) state.viewMode = "operator";
   bind();
   await setupMotion();
   simulateApiRefresh();
@@ -30,20 +31,23 @@ function onKey(e) {
   if (e.key === "Enter") toggleCheck();
   if (e.key === "Escape") { currentStepIndex = 0; selectedCheckIndex = 0; stopDemoAuto(); render(); }
   if (e.key.toLowerCase() === "r") resetAll();
-  if (e.key.toLowerCase() === "m") togglePanel();
+  if (e.key.toLowerCase() === "m" && state.viewMode === "details") togglePanel();
+  if (e.key.toLowerCase() === "o") toggleMode();
   if (e.key.toLowerCase() === "a") audioTest();
   if (e.key.toLowerCase() === "g") gpsTest();
   if (e.key.toLowerCase() === "d") toggleDemoAuto();
 }
+function toggleMode() { state.viewMode = state.viewMode === "operator" ? "details" : "operator"; render(); save(); }
 function stepKey(i) { return `s_${i}`; }
 function list(i) { return state.checked[stepKey(i)] || []; }
 function setList(i, arr) { state.checked[stepKey(i)] = arr; save(); }
 function nextStep() { currentStepIndex = (currentStepIndex + 1) % steps.length; selectedCheckIndex = 0; render(); }
 function prevStep() { currentStepIndex = (currentStepIndex - 1 + steps.length) % steps.length; selectedCheckIndex = 0; render(); }
-function move(delta) { const n = steps[currentStepIndex].checks.length; selectedCheckIndex = (selectedCheckIndex + delta + n) % n; renderChecklist(); }
+function move(delta) { const n = steps[currentStepIndex].checks.length; selectedCheckIndex = (selectedCheckIndex + delta + n) % n; renderChecklist(); renderOperator(); }
 function toggleCheck() {
   const arr = list(currentStepIndex); const i = selectedCheckIndex; const p = arr.indexOf(i);
-  if (p >= 0) arr.splice(p, 1); else arr.push(i); setList(currentStepIndex, arr);
+  if (p >= 0) arr.splice(p, 1); else arr.push(i);
+  setList(currentStepIndex, arr);
   refreshCriticalStates(); render();
 }
 function refreshCriticalStates() {
@@ -55,12 +59,18 @@ function refreshCriticalStates() {
   state.live.safety = state.live.g54 ? "OK" : "BLOQUÉ";
 }
 function isDone(stepIdx, checkIdx) { return (state.checked[stepKey(stepIdx)] || []).includes(checkIdx); }
-function lockCount() {
-  return [state.live.tool === job.expectedToolShort, state.live.toolLength, state.live.g54, state.live.simulation].filter(Boolean).length;
+function lockStates() {
+  return [
+    { label: "Outil OK", ok: state.live.tool === job.expectedToolShort },
+    { label: "Longueur outil OK", ok: state.live.toolLength },
+    { label: "G54 OK", ok: state.live.g54 },
+    { label: "Simulation OK", ok: state.live.simulation }
+  ];
 }
+function lockCount() { return lockStates().filter((l) => l.ok).length; }
 function getAlert() {
   const dangerPrefix = "⚠ ALERTE ATELIER —";
-  if (currentStepIndex >= 2 && state.live.tool !== job.expectedToolShort) return ["danger", `${dangerPrefix} mauvais outil: ${state.live.tool}. Attendu ${job.expectedToolShort}.`];
+  if (currentStepIndex >= 2 && state.live.tool !== job.expectedToolShort) return ["danger", `${dangerPrefix} mauvais outil: ${state.live.tool}. Attendu ${job.expectedToolShort}. NE PAS LANCER.`];
   if (currentStepIndex >= 3 && !state.live.toolLength) return ["warning", "⚠ ALERTE CONTEXTUELLE — Outil correct mais longueur non mesurée. Risque collision Z."];
   if (currentStepIndex >= 4 && !state.live.g54) return ["danger", `${dangerPrefix} origine G54 non validée. Blocage lancement.`];
   if (currentStepIndex >= 5 && !state.live.simulation) return ["warning", "⚠ ALERTE CONTEXTUELLE — Simulation à vide non validée. Confirmer avant cycle."];
@@ -71,13 +81,17 @@ function getAlert() {
 function allCriticalOk() { return state.live.tool === job.expectedToolShort && state.live.toolLength && state.live.g54 && state.live.simulation && state.live.firstPart; }
 function render() {
   const s = steps[currentStepIndex]; refreshCriticalStates();
+  document.body.classList.toggle("operator-mode", state.viewMode === "operator");
   $("machine-name").textContent = job.machine;
   $("program-name").textContent = job.program;
   $("step-counter").textContent = `${currentStepIndex + 1}/${steps.length}`;
+  $("live-mode-label").textContent = state.viewMode === "operator" ? "MODE OPÉRATEUR" : "MODE DÉTAILS";
   $("live-mode").textContent = `MODE: ${state.live.mode}`;
   $("live-tool").textContent = `OUTIL: ${state.live.tool}`;
   $("live-origin").textContent = `G54: ${state.live.g54 ? "OK" : "NOK"}`;
   $("live-api").textContent = `API: ${state.live.api}`;
+  $("demo-status").textContent = state.demoAuto ? "DÉMO AUTO ACTIVE" : "DÉMO AUTO OFF";
+  $("demo-status").classList.toggle("active", state.demoAuto);
   $("live-feed").textContent = `${state.live.feed}%`;
   $("live-safety").textContent = state.live.safety;
   $("locks-gauge").textContent = `${lockCount()}/4`;
@@ -89,7 +103,24 @@ function render() {
   const [level, text] = getAlert(); const box = $("alert-box"); box.className = `alert-box alert-${level}`; box.textContent = text;
   $("panel-title").textContent = panel === "checklist" ? "Checklist étape" : panel === "demo" ? "Démo lunettes" : "Pourquoi lunettes > tablette";
   $("panel-mode").textContent = panel === "checklist" ? "M: Checklist" : panel === "demo" ? "M: Démo" : "M: Pourquoi";
-  renderChecklist(); renderDemoPanel(); renderWhyPanel(); renderVisual(s.visual);
+  renderLocks(); renderChecklist(); renderDemoPanel(); renderWhyPanel(); renderVisual(s.visual); renderOperator();
+}
+function renderLocks() {
+  const host = $("locks-list");
+  host.innerHTML = lockStates().map((l) => `<div class="lock-item ${l.ok ? "ok" : ""}">${l.ok ? "✓" : "•"} ${l.label}</div>`).join("");
+}
+function renderOperator() {
+  const s = steps[currentStepIndex]; const [level, text] = getAlert();
+  $("operator-machine").textContent = job.machine;
+  $("operator-program").textContent = job.program;
+  $("operator-step").textContent = `${currentStepIndex + 1}/${steps.length}`;
+  $("operator-locks").textContent = `${lockCount()}/4`;
+  $("operator-title").textContent = s.title.toUpperCase();
+  $("operator-action").textContent = s.action;
+  $("operator-validation").textContent = `Validation en cours : ${s.checks[selectedCheckIndex] || "--"}`;
+  const alert = $("operator-alert");
+  alert.className = `operator-alert alert-${level}`;
+  alert.textContent = text;
 }
 function renderChecklist() {
   const s = steps[currentStepIndex]; const host = $("checklist-panel"); host.innerHTML = "";
@@ -109,33 +140,27 @@ function renderDemoPanel() {
     "Caméra/photo/micro: prévu via SDK mobile / Device Access Toolkit"
   ].map((t) => `<div class="demo-line ${t.includes("prévu") ? "off" : ""}">${t}</div>`).join("");
 }
-function renderWhyPanel() {
-  const host = $("why-panel");
-  host.innerHTML = [
-    "✓ Vue machine + instructions sans quitter la zone d'usinage",
-    "✓ Réduit les allers-retours tablette / pupitre",
-    "✓ Alertes contextuelles pendant l'action (outil, G54, simulation)",
-    "✓ Progression opérateur lisible en temps réel",
-    "✓ Compatible web statique GitHub Pages"
-  ].map((t) => `<div class='demo-line'>${t}</div>`).join("");
-}
+function renderWhyPanel() { const host = $("why-panel"); host.innerHTML = ["✓ Vue machine + instructions sans quitter la zone d'usinage", "✓ Réduit les allers-retours tablette / pupitre", "✓ Alertes contextuelles pendant l'action (outil, G54, simulation)", "✓ Progression opérateur lisible en temps réel", "✓ Compatible web statique GitHub Pages"].map((t) => `<div class='demo-line'>${t}</div>`).join(""); }
 function renderVisual(kind) { const map = { program:`<svg viewBox='0 0 100 60'><rect x='8' y='6' width='84' height='48' fill='none' stroke='#8fd4ff'/><text x='14' y='22' fill='#d8eeff' font-size='7'>O1205_POCHE_ALU</text><text x='14' y='34' fill='#d8eeff' font-size='7'>N10 G54 G17</text></svg>`, vise:`<svg viewBox='0 0 100 60'><rect x='8' y='22' width='84' height='18' fill='none' stroke='#8fd4ff'/><rect x='38' y='14' width='24' height='26' fill='#2c4a66'/></svg>`, tool:`<svg viewBox='0 0 100 60'><line x1='50' y1='6' x2='50' y2='44' stroke='#8fd4ff' stroke-width='5'/><polygon points='42,44 58,44 50,55' fill='#8fd4ff'/></svg>`, toolLength:`<svg viewBox='0 0 100 60'><line x1='35' y1='8' x2='35' y2='52' stroke='#8fd4ff'/><line x1='55' y1='8' x2='55' y2='52' stroke='#8fd4ff'/><text x='58' y='30' fill='#fff' font-size='7'>L?</text></svg>`, g54:`<svg viewBox='0 0 100 60'><line x1='18' y1='46' x2='82' y2='46' stroke='#8fd4ff'/><line x1='18' y1='46' x2='18' y2='10' stroke='#8fd4ff'/><text x='21' y='14' fill='#fff' font-size='7'>G54</text></svg>`, path:`<svg viewBox='0 0 100 60'><polyline points='8,46 20,20 35,34 52,16 74,30 92,12' fill='none' stroke='#8fd4ff' stroke-width='2'/></svg>`, part:`<svg viewBox='0 0 100 60'><rect x='20' y='14' width='60' height='34' fill='none' stroke='#8fd4ff'/><text x='24' y='32' fill='#fff' font-size='8'>60.04 OK</text></svg>`, green:`<svg viewBox='0 0 100 60'><circle cx='50' cy='30' r='18' fill='none' stroke='#40df86' stroke-width='4'/><polyline points='40,30 48,38 62,22' fill='none' stroke='#40df86' stroke-width='4'/></svg>` }; $("step-visual").innerHTML = map[kind] || ""; }
 function togglePanel() { panel = panel === "checklist" ? "demo" : panel === "demo" ? "why" : "checklist"; render(); }
-function toggleDemoAuto() {
-  if (state.demoAuto) { stopDemoAuto(); } else {
-    state.demoAuto = true;
-    state.autoTimer = setInterval(() => {
-      const checks = steps[currentStepIndex].checks.length;
-      selectedCheckIndex = Math.floor(Math.random() * checks);
+function toggleDemoAuto() { state.demoAuto ? stopDemoAuto() : startDemoAuto(); render(); save(); }
+function startDemoAuto() {
+  state.demoAuto = true;
+  state.autoTimer = setInterval(() => {
+    const checks = steps[currentStepIndex].checks.length;
+    const arr = list(currentStepIndex);
+    const nextIdx = Array.from({ length: checks }, (_, i) => i).find((i) => !arr.includes(i));
+    if (nextIdx !== undefined) {
+      selectedCheckIndex = nextIdx;
       toggleCheck();
-      if (Math.random() > 0.45) nextStep();
-    }, 2800);
-  }
-  render(); save();
+      return;
+    }
+    nextStep();
+  }, 2200);
 }
 function stopDemoAuto() { state.demoAuto = false; clearInterval(state.autoTimer); state.autoTimer = null; save(); }
-function resetAll() { localStorage.removeItem(storageKey); state.checked = {}; panel = "checklist"; currentStepIndex = 0; selectedCheckIndex = 0; stopDemoAuto(); state.live = { mode:"Réglage", tool:"T08 Ø6", g54:false, feed:25, api:"SIM", safety:"ATTENTE", toolLength:false, simulation:false, firstPart:false }; render(); }
-function save() { localStorage.setItem(storageKey, JSON.stringify({ checked: state.checked, live: state.live, sensors: state.sensors, demoAuto: state.demoAuto })); }
+function resetAll() { localStorage.removeItem(storageKey); state.viewMode = "operator"; state.checked = {}; panel = "checklist"; currentStepIndex = 0; selectedCheckIndex = 0; stopDemoAuto(); state.live = { mode:"Réglage", tool:"T08 Ø6", g54:false, feed:25, api:"SIM", safety:"ATTENTE", toolLength:false, simulation:false, firstPart:false }; render(); }
+function save() { localStorage.setItem(storageKey, JSON.stringify({ viewMode: state.viewMode, checked: state.checked, live: state.live, sensors: state.sensors, demoAuto: state.demoAuto })); }
 function audioTest() { let ok = false; try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = "sine"; o.frequency.value = 880; g.gain.value = 0.03; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.14); ok = true; } catch {}
   if ("speechSynthesis" in window) { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance("Alerte CNC")); ok = true; }
   state.sensors.audio = ok ? "OK" : "audio non disponible dans ce navigateur"; render(); }
